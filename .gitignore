@@ -1,4 +1,6 @@
 *.pem
 *.key
 *.csr
+*.srl
 ca/
+config
