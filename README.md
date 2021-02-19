@@ -1,6 +1,6 @@
 # What
 
-This directory includes a script `generate-certs.sh` to generate test certificates
+This repo includes a script `generate-certs.sh` to generate test certificates.
 
 The script generates (but does not overwrite) root CA and client key pairs.
 The root CA issues an intermediate CA which is then used to issue server
@@ -17,7 +17,8 @@ tests only. For production use, https://github.com/cloudflare/cfssl is recommend
 # Steps breakdown
 
 The script `generate-certs.sh` consists of below steps.
-The script for each step can be executed independently if their input files are not deleted.
+Each step's script can be executed independently if its input files
+(from preceeding comands) are present (not deleted).
 
 ## Root CA `00-generate-root-ca.sh`
 
