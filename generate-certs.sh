@@ -18,9 +18,10 @@ clean
 
 dir="$(date --iso-8601=second | tr ':' '-' | tr '+' '-')"
 mkdir "$dir"
-mv client.* "$dir/"
 mv ca.pem "$dir/"
 mv server.key "$dir/"
+mv client.key "$dir/"
+cat client.pem inter-ca.pem > "$dir/client.pem"
 cat server.pem inter-ca.pem > "$dir/server.pem"
 
 clean

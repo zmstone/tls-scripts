@@ -48,9 +48,9 @@ $SAN_DNS
 $SAN_IP
 
 [ca]
-default_ca      = MyRootCA
+default_ca      = MyInterCA
 
-[MyRootCA]
+[MyInterCA]
 dir            = ./ca
 database       = \$dir/index.txt
 new_certs_dir  = \$dir
