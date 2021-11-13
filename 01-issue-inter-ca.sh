@@ -21,7 +21,7 @@ if [ ! -f ca/index.txt.attr ]; then touch ca/index.txt.attr; fi
 if [ ! -f ca/serial ]; then date '+%s' > ca/serial; fi
 
 # openssl genrsa -out inter-ca.key 2048
-openssl ecparam -name prime256v1 -genkey -noout -out "inter-ca.key"
+openssl ecparam -name secp521r1 -genkey -noout -out "inter-ca.key"
 openssl req -sha256 -new -key inter-ca.key -out inter-ca.csr -nodes -subj "/C=${CA_C}/ST=${CA_ST}/L=${CA_L}/O=${CA_O}/OU=${CA_OU}/CN=${CA_CN}" -addext "basicConstraints=critical,CA:true"
 
 # openssl onelines do not support ca extentions well

@@ -15,7 +15,7 @@ CA_CN="MyRootCA"
 ensure_private_key() {
   file="$1"
   if [ ! -f "$file" ]; then
-    openssl ecparam -name prime256v1 -genkey -noout -out "$file"
+    openssl ecparam -name secp521r1 -genkey -noout -out "$file"
   fi
 }
 
