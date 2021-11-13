@@ -22,7 +22,7 @@ if [ ! -f ca/serial ]; then date '+%s' > ca/serial; fi
 
 # openssl genrsa -out inter-ca.key 2048
 openssl ecparam -name secp521r1 -genkey -noout -out "inter-ca.key"
-openssl req -sha256 -new -key inter-ca.key -out inter-ca.csr -nodes -subj "/C=${CA_C}/ST=${CA_ST}/L=${CA_L}/O=${CA_O}/OU=${CA_OU}/CN=${CA_CN}" -addext "basicConstraints=critical,CA:true"
+openssl req -sha512 -new -key inter-ca.key -out inter-ca.csr -nodes -subj "/C=${CA_C}/ST=${CA_ST}/L=${CA_L}/O=${CA_O}/OU=${CA_OU}/CN=${CA_CN}" -addext "basicConstraints=critical,CA:true"
 
 # openssl onelines do not support ca extentions well
 # hence the need of a config file
@@ -42,7 +42,7 @@ serial         = \$dir/serial
 
 default_days   = 3650
 default_crl_days= 30
-default_md     = sha256
+default_md     = sha512
 
 policy         = my_policy
 email_in_dn    = no

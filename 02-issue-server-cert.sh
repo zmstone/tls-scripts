@@ -28,7 +28,7 @@ cat <<-EOF > config
 [req]
 default_bits = 2048
 prompt = no
-default_md = sha256
+default_md = sha512
 req_extensions = req_ext
 distinguished_name = dn
 
@@ -61,7 +61,7 @@ serial         = \$dir/serial
 
 default_days   = 3650
 default_crl_days= 30
-default_md     = sha256
+default_md     = sha512
 
 policy         = cert_policy
 email_in_dn    = no
@@ -85,8 +85,7 @@ if [ ! -f ca/index.txt ]; then touch ca/index.txt; fi
 if [ ! -f ca/index.txt.attr ]; then touch ca/index.txt.attr; fi
 if [ ! -f ca/serial ]; then date '+%s' > ca/serial; fi
 
-openssl ecparam -name prime256v1 -genkey -noout -out "server.key"
-#openssl req -newkey rsa:2048 -sha256 -keyout server.key -out server.csr -nodes -config ./config
-openssl req -newkey ec:<(openssl ecparam -name prime256v1) -keyout server.key -out server.csr -nodes -config ./config
+openssl ecparam -name secp521r1 -genkey -noout -out "server.key"
+openssl req -newkey ec:<(openssl ecparam -name secp521r1) -keyout server.key -out server.csr -nodes -config ./config
 openssl ca -notext -batch -out server.pem -config config -extensions req_ext -infiles server.csr
 rm -f server.csr

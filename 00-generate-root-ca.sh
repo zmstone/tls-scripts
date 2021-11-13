@@ -21,7 +21,7 @@ ensure_private_key() {
 
 ensure_private_key ca.key
 if [ ! -f ca.pem ]; then
-  openssl req -sha256 -new -key "ca.key" -out "ca.csr" -nodes -subj "/C=${CA_C}/ST=${CA_ST}/L=${CA_L}/O=${CA_O}/OU=${CA_OU}/CN=${CA_CN}" -addext "basicConstraints=critical,CA:true"
-  openssl x509 -req -in ca.csr -sha256 -signkey ca.key -out ca.pem -days 3650
+  openssl req -sha512 -new -key "ca.key" -out "ca.csr" -nodes -subj "/C=${CA_C}/ST=${CA_ST}/L=${CA_L}/O=${CA_O}/OU=${CA_OU}/CN=${CA_CN}" -addext "basicConstraints=critical,CA:true"
+  openssl x509 -req -in ca.csr -sha512 -signkey ca.key -out ca.pem -days 3650
   rm -f ca.csr
 fi
