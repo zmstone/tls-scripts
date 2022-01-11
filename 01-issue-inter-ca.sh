@@ -3,7 +3,10 @@
 set -euo pipefail
 
 ## This script issues an intermediate CA by root CA
-## generates files: inter-ca.key inter-ca.pem
+## generates files: inter-ca-<suffix>.key inter-ca-<suffix>.pem
+## where suffix is to make it possible to issue more than one intermediate CAs
+
+SUFFIX="${1:-}"
 
 cd "$(dirname "$0")"
 
@@ -12,7 +15,13 @@ CA_ST="${TLS_DN_ST:-Stockholm}"
 CA_L="${TLS_DN_L:-Stockholm}"
 CA_O="${TLS_DN_O:-MyOrgName}"
 CA_OU="${TLS_DN_OU:-MyIntermediateCA}"
-CA_CN="MyIntermediateCA"
+CA_CN="MyIntermediateCA-${SUFFIX}"
+
+if [ -z "${SUFFIX}" ]; then
+    FILE_NAME="inter-ca"
+else
+    FILE_NAME="inter-ca-${SUFFIX}"
+fi
 
 mkdir -p ca
 rm -f ./ca/*
@@ -20,17 +29,19 @@ if [ ! -f ca/index.txt ]; then touch ca/index.txt; fi
 if [ ! -f ca/index.txt.attr ]; then touch ca/index.txt.attr; fi
 if [ ! -f ca/serial ]; then date '+%s' > ca/serial; fi
 
-openssl genrsa -out inter-ca.key 2048
-openssl req -sha256 -new -key inter-ca.key -out inter-ca.csr -nodes -subj "/C=${CA_C}/ST=${CA_ST}/L=${CA_L}/O=${CA_O}/OU=${CA_OU}/CN=${CA_CN}" -addext "basicConstraints=critical,CA:true"
+if ! [ -f "${FILE_NAME}.key" ]; then
+    openssl genrsa -out "${FILE_NAME}.key" 2048
+fi
+openssl req -sha256 -new -key "${FILE_NAME}.key" -out "${FILE_NAME}.csr" -nodes -subj "/C=${CA_C}/ST=${CA_ST}/L=${CA_L}/O=${CA_O}/OU=${CA_OU}/CN=${CA_CN}" -addext "basicConstraints=critical,CA:true"
 
 # openssl onelines do not support ca extentions well
 # hence the need of a config file
 
 cat <<EOF > config
-[ ca ]
-default_ca      = MyIntermediateCA
+[ca]
+default_ca      = DEFAULT_CA
 
-[ MyIntermediateCA ]
+[DEFAULT_CA]
 dir            = ./ca
 database       = \$dir/index.txt
 new_certs_dir  = \$dir
@@ -50,7 +61,7 @@ name_opt       = ca_default
 cert_opt       = ca_default
 copy_extensions = none
 
-[ my_policy ]
+[my_policy]
 countryName            = supplied
 stateOrProvinceName    = supplied
 organizationName       = supplied
@@ -65,5 +76,5 @@ subjectKeyIdentifier    = hash
 authorityKeyIdentifier  = keyid,issuer
 EOF
 
-openssl ca -batch -config config -in inter-ca.csr -out inter-ca.pem -notext -extensions ca_ext
-rm inter-ca.csr
+openssl ca -batch -config config -in "${FILE_NAME}.csr" -out "${FILE_NAME}.pem" -notext -extensions ca_ext
+rm -f "${FILE_NAME}.csr"

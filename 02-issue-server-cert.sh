@@ -2,6 +2,16 @@
 
 set -euo pipefail
 
+if [ -z "${1:-}" ]; then
+    echo "Usage: $0 <CA_NAME>"
+    echo "<CA_NAME> is the name of the CA cert files"
+    echo "There should be a <CA_NAME>.pem for the CA certificate"
+    echo "and a <CA_NAME>.key for the private key"
+    exit 1
+fi
+
+ISSUER_CA="${1}"
+
 cd "$(dirname "$0")"
 
 DN_C="${TLS_DN_C:-SE}"
@@ -19,7 +29,6 @@ SAN_DNS="DNS = $DN_CN"
 if [ -n "${TLS_SERVER_DNS:-}" ]; then
   SAN_DNS="DNS = $TLS_SERVER_DNS"
 fi
-ISSUER_CA="${ISSUER_CA:-inter-ca}"
 
 # Openssl command oneliners do not support request extentions well
 # hence the need of a config file
@@ -48,9 +57,9 @@ $SAN_DNS
 $SAN_IP
 
 [ca]
-default_ca      = MyRootCA
+default_ca      = DEFAULT_CA
 
-[MyRootCA]
+[DEFAULT_CA]
 dir            = ./ca
 database       = \$dir/index.txt
 new_certs_dir  = \$dir
