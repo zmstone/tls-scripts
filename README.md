@@ -2,12 +2,18 @@
 
 This repo includes a script `generate-certs.sh` to generate test certificates.
 
-The script generates (but does not overwrite) root CA and client key pairs.
-The root CA issues an intermediate CA which is then used to issue server
-certificate.
+The script generates (but does not overwrite private keys):
 
-Server certificate can be issued by root CA if environment variable `SERVER_CERT_ISSUER`
-is set to `ca` (default is `inter-ca` which instructs the usage of intermediate CA).
+* Root CA key and cert (self-sign)
+* 2 Intermediate CAs (issued by root CA), inter-ca-1 and inter-ca-2
+* Server key and cert
+* Client key and cert
+
+The issuer of the server and client certificates can be set with environment variables
+`SERVER_CERT_ISSUER` and `CLIENT_CERT_ISSUER`
+
+By default, the server certificate is issued by intermediate CA 'inter-ca-1'
+and the client certificate is issued by 'inter-ca-2'
 
 # NOTE
 
@@ -31,15 +37,15 @@ CA_OU="${TLS_DN_OU:-MyRootCA}"  # CA org unit name
 CA_CN="MyRootCA"                # CA common name
 ```
 
-## Intermediate CA `01-issue-inter-ca.sh`
+## Intermediate CA `01-issue-inter-ca.sh <SUFFIX>`
 
 ```bash
-CA_C="${TLS_DN_C:-SE}"                  # Inter-CA country
-CA_ST="${TLS_DN_ST:-Stockholm}"         # Inter-CA state or province
-CA_L="${TLS_DN_L:-Stockholm}"           # Inter-CA location
-CA_O="${TLS_DN_O:-MyOrgName}"           # Inter-CA org name
-CA_OU="${TLS_DN_OU:-MyIntermediateCA}"  # Inter-CA org unit name
-CA_CN="MyIntermediateCA"                # Inter-CA common name
+CA_C="${TLS_DN_C:-SE}"                           # Inter-CA country
+CA_ST="${TLS_DN_ST:-Stockholm}"                  # Inter-CA state or province
+CA_L="${TLS_DN_L:-Stockholm}"                    # Inter-CA location
+CA_O="${TLS_DN_O:-MyOrgName}"                    # Inter-CA org name
+CA_OU="${TLS_DN_OU:-MyIntermediateCA-<SUFFIX>}"  # Inter-CA org unit name
+CA_CN="MyIntermediateCA"                         # Inter-CA common name
 ```
 
 ## Server Certificate `02-issue-server-cert.sh`
@@ -51,9 +57,9 @@ DN_L="${TLS_DN_L:-Stockholm}"                # Server location
 DN_O="${TLS_DN_O:-MyOrgName}"                # Server org name
 DN_OU="${TLS_DN_OU:-MyService}"              # Server org unit name
 DN_CN="${TLS_SERVER_COMMON_NAME:-localhost}" # Server common name
-ISSUER_CA="${ISSUER_CA:-inter-ca}"           # Which ca ('inter-ca' or 'ca') to issue the server cert
 TLS_SERVER_IP                                # IP in SAN if set
 TLS_SERVER_DNS                               # DNS in SAN if set
+SERVER_CERT_ISSUER=inter-ca-1                # 'ca' to issue from Root CA
 ```
 
 ## Client Certificates  `03-issue-client-cert.sh`
@@ -65,4 +71,5 @@ CL_L="${TLS_DN_L:-Stockholm}"                 # Client location
 CL_O="${TLS_DN_O:-MyOrgName}"                 # Client org name
 CL_OU="${TLS_DN_OU:-MyServiceClient}"         # Client org unit name
 CL_CN="${TLS_CLIENT_COMMON_NAME:-localhost}"  # Clietn common name
+CLIENT_CERT_ISSUER=inter-ca-2                 # 'ca' to issue from Root CA
 ```
