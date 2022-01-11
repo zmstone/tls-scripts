@@ -17,9 +17,14 @@ if [ ! -f client.key ]; then
   openssl genrsa -out client.key 2048
 fi
 
-if [ ! -f client.pem ]; then
-  openssl req -sha256 -new -key client.key -out client.csr -nodes -subj "/C=${CL_C}/ST=${CL_ST}/L=${CL_L}/O=${CL_O}/OU=${CL_OU}/CN=${CL_CN}" -addext "basicConstraints=critical,CA:false"
-  openssl x509 -req -CA ca.pem -CAkey ca.key -in client.csr -out client.pem -days 3650  -CAcreateserial
-  rm -f client.csr
+if [ "${ISSUE_CLIENT_CERT_BY:-root}" = 'root' ]; then
+    CA="ca"
+else
+    CA="inter-ca"
 fi
 
+if [ ! -f client.pem ]; then
+  openssl req -sha256 -new -key client.key -out client.csr -nodes -subj "/C=${CL_C}/ST=${CL_ST}/L=${CL_L}/O=${CL_O}/OU=${CL_OU}/CN=${CL_CN}" -addext "basicConstraints=critical,CA:false"
+  openssl x509 -req -CA "${CA}.pem" -CAkey "${CA}.key" -in client.csr -out client.pem -days 3650  -CAcreateserial
+  rm -f client.csr
+fi

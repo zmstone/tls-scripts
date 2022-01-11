@@ -65,4 +65,5 @@ CL_L="${TLS_DN_L:-Stockholm}"                 # Client location
 CL_O="${TLS_DN_O:-MyOrgName}"                 # Client org name
 CL_OU="${TLS_DN_OU:-MyServiceClient}"         # Client org unit name
 CL_CN="${TLS_CLIENT_COMMON_NAME:-localhost}"  # Clietn common name
+ISSUE_CLIENT_CERT_BY=root                     # set to intermediate to issue client cert from intermediate CA
 ```
