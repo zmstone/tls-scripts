@@ -95,6 +95,6 @@ if [ ! -f ca/index.txt.attr ]; then touch ca/index.txt.attr; fi
 if [ ! -f ca/serial ]; then date '+%s' > ca/serial; fi
 
 openssl genrsa -out server.key 2048
-openssl req -newkey rsa:2048 -sha256 -keyout server.key -out server.csr -nodes -config ./config
+openssl req -newkey rsa:2048 -sha256 -key server.key -out server.csr -nodes -config ./config
 openssl ca -notext -batch -out server.pem -config config -extensions req_ext -infiles server.csr
 rm -f server.csr
