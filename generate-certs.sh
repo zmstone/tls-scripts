@@ -17,7 +17,7 @@ clean
 ./02-issue-server-cert.sh "${SERVER_CERT_ISSUER:-inter-ca-1}"
 ./03-issue-client-cert.sh "${CLIENT_CERT_ISSUER:-inter-ca-2}"
 
-dir="$(date --iso-8601=second)"
+dir="$(date --iso-8601=second | tr ':' '-')"
 mkdir "$dir"
 mv client.key "$dir/"
 mv ca.pem "$dir/"
