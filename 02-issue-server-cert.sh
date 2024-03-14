@@ -96,7 +96,15 @@ if [ ! -f ca/index.txt ]; then touch ca/index.txt; fi
 if [ ! -f ca/index.txt.attr ]; then touch ca/index.txt.attr; fi
 if [ ! -f ca/serial ]; then date '+%s' > ca/serial; fi
 
-openssl genrsa -out server.key 2048
-openssl req -newkey rsa:2048 -sha256 -key server.key -out server.csr -nodes -config ./config
+case $ALG in
+    rsa)
+        openssl genrsa -out server.key 2048
+        openssl req -newkey rsa:2048 -sha256 -key server.key -out server.csr -nodes -config ./config
+        ;;
+    ec)
+        openssl ecparam -name prime256v1 -genkey -noout -out server.key
+        openssl req -newkey ec:<(openssl ecparam -name secp384r1) -keyout server.key -out server.csr -nodes -config ./config
+        ;;
+esac
 openssl ca -notext -batch -out server.pem -config config -extensions req_ext -infiles server.csr
 rm -f server.csr

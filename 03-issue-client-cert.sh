@@ -22,7 +22,14 @@ CL_OU="${TLS_DN_OU:-MyServiceClient}"
 CL_CN="${TLS_CLIENT_COMMON_NAME:-localhost}"
 
 if [ ! -f client.key ]; then
-  openssl genrsa -out client.key 2048
+  case $ALG in
+    rsa)
+      openssl genrsa -out client.key 2048
+      ;;
+    ec)
+      openssl ecparam -name prime256v1 -genkey -noout -out client.key
+      ;;
+  esac
 fi
 
 if [ ! -f client.pem ]; then

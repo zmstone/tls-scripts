@@ -30,7 +30,14 @@ if [ ! -f ca/index.txt.attr ]; then touch ca/index.txt.attr; fi
 if [ ! -f ca/serial ]; then date '+%s' > ca/serial; fi
 
 if ! [ -f "${FILE_NAME}.key" ]; then
-    openssl genrsa -out "${FILE_NAME}.key" 2048
+    case $ALG in
+        rsa)
+            openssl genrsa -out "${FILE_NAME}.key" 2048
+            ;;
+        ec)
+            openssl ecparam -name prime256v1 -genkey -noout -out "${FILE_NAME}.key"
+            ;;
+    esac
 fi
 openssl req -sha256 -new -key "${FILE_NAME}.key" -out "${FILE_NAME}.csr" -nodes -subj "/C=${CA_C}/ST=${CA_ST}/L=${CA_L}/O=${CA_O}/OU=${CA_OU}/CN=${CA_CN}" -addext "basicConstraints=critical,CA:true"
 
