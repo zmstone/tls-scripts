@@ -51,6 +51,8 @@ CN = $DN_CN
 
 [req_ext]
 subjectAltName = @alt_names
+keyUsage = digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
 
 [alt_names]
 $SAN_DNS

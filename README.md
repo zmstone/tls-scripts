@@ -39,13 +39,15 @@ CA_CN="MyRootCA"                # CA common name
 
 ## Intermediate CA `01-issue-inter-ca.sh <SUFFIX>`
 
+Where `<SUFFIX>` is to make it possible to generate more than intermediate CAs.
+
 ```bash
-CA_C="${TLS_DN_C:-SE}"                           # Inter-CA country
-CA_ST="${TLS_DN_ST:-Stockholm}"                  # Inter-CA state or province
-CA_L="${TLS_DN_L:-Stockholm}"                    # Inter-CA location
-CA_O="${TLS_DN_O:-MyOrgName}"                    # Inter-CA org name
-CA_OU="${TLS_DN_OU:-MyIntermediateCA-<SUFFIX>}"  # Inter-CA org unit name
-CA_CN="MyIntermediateCA"                         # Inter-CA common name
+CA_C="${TLS_DN_C:-SE}"                                # Inter-CA country
+CA_ST="${TLS_DN_ST:-Stockholm}"                       # Inter-CA state or province
+CA_L="${TLS_DN_L:-Stockholm}"                         # Inter-CA location
+CA_O="${TLS_DN_O:-MyOrgName}"                         # Inter-CA org name
+CA_OU="${TLS_DN_OU:-MyIntermediateCA}"                # Inter-CA org unit name
+CA_CN="${TLS_INTER_CA_CN:-MyIntermediateCA-<SUFFIX>}" # Inter-CA common name
 ```
 
 ## Server Certificate `02-issue-server-cert.sh`
