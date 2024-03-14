@@ -10,6 +10,8 @@ if [ -z "${1:-}" ]; then
     exit 1
 fi
 
+echo "Issuing client certificate"
+
 ISSUER_CA="${1}"
 
 cd "$(dirname "$0")"
@@ -28,6 +30,13 @@ if [ ! -f client.key ]; then
       ;;
     ec)
       openssl ecparam -name prime256v1 -genkey -noout -out client.key
+      ;;
+    dsa)
+      openssl gendsa -out "client.key" <(openssl dsaparam 2048)
+      ;;
+    *)
+      echo "Unknown algorithm: $ALG"
+      exit 1
       ;;
   esac
 fi

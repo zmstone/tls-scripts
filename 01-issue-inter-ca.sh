@@ -6,6 +6,8 @@ set -euo pipefail
 ## generates files: inter-ca-<suffix>.key inter-ca-<suffix>.pem
 ## where suffix is to make it possible to issue more than one intermediate CAs
 
+echo "Issuing intermediate CA"
+
 SUFFIX="${1:-}"
 
 cd "$(dirname "$0")"
@@ -36,6 +38,13 @@ if ! [ -f "${FILE_NAME}.key" ]; then
             ;;
         ec)
             openssl ecparam -name prime256v1 -genkey -noout -out "${FILE_NAME}.key"
+            ;;
+        dsa)
+            openssl gendsa -out "${FILE_NAME}.key" <(openssl dsaparam 2048)
+            ;;
+        *)
+            echo "Unknown algorithm: $ALG"
+            exit 1
             ;;
     esac
 fi

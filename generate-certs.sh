@@ -11,6 +11,7 @@ clean() {
 
 clean
 
+export ALG="${ALG:-rsa}"
 ./00-generate-root-ca.sh
 ./01-issue-inter-ca.sh 1
 ./01-issue-inter-ca.sh 2

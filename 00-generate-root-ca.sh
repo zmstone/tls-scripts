@@ -3,6 +3,8 @@
 ## This script generates ca.key and self-signed ca.pem
 set -euo pipefail
 
+echo "Generating root CA"
+
 cd "$(dirname "$0")"
 
 CA_C="${TLS_DN_C:-SE}"
@@ -21,6 +23,13 @@ ensure_private_key() {
         ;;
       ec)
         openssl ecparam -name prime256v1 -genkey -noout -out "$file"
+        ;;
+      dsa)
+        openssl gendsa -out "$file" <(openssl dsaparam 2048)
+        ;;
+      *)
+        echo "Unknown algorithm: $ALG"
+        exit 1
         ;;
     esac
   fi

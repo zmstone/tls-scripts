@@ -10,6 +10,8 @@ if [ -z "${1:-}" ]; then
     exit 1
 fi
 
+echo "Issuing server certificate"
+
 ISSUER_CA="${1}"
 
 cd "$(dirname "$0")"
@@ -98,13 +100,21 @@ if [ ! -f ca/serial ]; then date '+%s' > ca/serial; fi
 
 case $ALG in
     rsa)
-        openssl genrsa -out server.key 2048
-        openssl req -newkey rsa:2048 -sha256 -key server.key -out server.csr -nodes -config ./config
-        ;;
+      openssl genrsa -out server.key 2048
+      openssl req -newkey rsa:2048 -sha256 -key server.key -out server.csr -nodes -config ./config
+      ;;
     ec)
-        openssl ecparam -name prime256v1 -genkey -noout -out server.key
-        openssl req -newkey ec:<(openssl ecparam -name secp384r1) -keyout server.key -out server.csr -nodes -config ./config
-        ;;
+      openssl ecparam -name prime256v1 -genkey -noout -out server.key
+      openssl req -newkey ec:<(openssl ecparam -name secp384r1) -key server.key -out server.csr -nodes -config ./config
+      ;;
+    dsa)
+      openssl gendsa -out "server.key" <(openssl dsaparam 2048)
+      openssl req -newkey dsa:<(openssl dsaparam 2048) -key server.key -out server.csr -nodes -config ./config
+      ;;
+    *)
+      echo "Unknown algorithm: $ALG"
+      exit 1
+      ;;
 esac
 openssl ca -notext -batch -out server.pem -config config -extensions req_ext -infiles server.csr
 rm -f server.csr
