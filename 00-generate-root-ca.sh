@@ -21,7 +21,7 @@ ensure_private_key() {
       rsa)
         openssl genrsa -out "$file" 2048
         ;;
-      ec)
+      ec|ecc)
         openssl ecparam -name prime256v1 -genkey -noout -out "$file"
         ;;
       dsa)

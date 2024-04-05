@@ -36,7 +36,7 @@ if ! [ -f "${FILE_NAME}.key" ]; then
         rsa)
             openssl genrsa -out "${FILE_NAME}.key" 2048
             ;;
-        ec)
+        ec|ecc)
             openssl ecparam -name prime256v1 -genkey -noout -out "${FILE_NAME}.key"
             ;;
         dsa)

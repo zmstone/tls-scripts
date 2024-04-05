@@ -77,3 +77,11 @@ CL_OU="${TLS_DN_OU:-MyServiceClient}"         # Client org unit name
 CL_CN="${TLS_CLIENT_COMMON_NAME:-localhost}"  # Clietn common name
 CLIENT_CERT_ISSUER=inter-ca-2                 # 'ca' to issue from Root CA
 ```
+
+## Choose Cryptographic Algorithms
+
+Set environment variable `ALG` to below values:
+
+- `rsa`: 2048 bits RSA key (size is not parameterized).
+- `ec` or `ecc`: to generate prime256v1 key.
+- `dsa`: to generate DSA key.

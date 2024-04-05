@@ -103,7 +103,7 @@ case $ALG in
       openssl genrsa -out server.key 2048
       openssl req -newkey rsa:2048 -sha256 -key server.key -out server.csr -nodes -config ./config
       ;;
-    ec)
+    ec|ecc)
       openssl ecparam -name prime256v1 -genkey -noout -out server.key
       openssl req -newkey ec:<(openssl ecparam -name secp384r1) -key server.key -out server.csr -nodes -config ./config
       ;;

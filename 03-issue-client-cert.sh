@@ -28,7 +28,7 @@ if [ ! -f client.key ]; then
     rsa)
       openssl genrsa -out client.key 2048
       ;;
-    ec)
+    ec|ecc)
       openssl ecparam -name prime256v1 -genkey -noout -out client.key
       ;;
     dsa)
