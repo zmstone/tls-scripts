@@ -17,8 +17,10 @@ and the client certificate is issued by 'inter-ca-2'
 
 # NOTE
 
-This collection of scripts only uses openssl commands, and it is intended for
-tests only. For production use, https://github.com/cloudflare/cfssl is recommended
+To make it work for most of the Linux distributions out of the box,
+this collection of scripts only uses openssl commands.
+It is intended for tests only.
+For production use maybe https://github.com/cloudflare/cfssl or similar PKI tools
 
 # Steps breakdown
 
