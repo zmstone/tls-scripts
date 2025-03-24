@@ -14,12 +14,19 @@ CA_O="${TLS_DN_O:-MyOrgName}"
 CA_OU="${TLS_DN_OU:-MyRootCA}"
 CA_CN="MyRootCA"
 
+SIGNOPTS=''
 ensure_private_key() {
   file="$1"
   if [ ! -f "$file" ]; then
     case $ALG in
       rsa)
         openssl genrsa -out "$file" 2048
+        ;;
+      rsa-pss)
+        openssl genrsa -out "$file" 2048
+        ## CA do not support this algorithm for now
+        # openssl genpkey -algorithm RSA-PSS -pkeyopt rsa_keygen_bits:2048 -out "$file"
+        # SIGNOPTS='-sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1'
         ;;
       ec|ecc)
         openssl ecparam -name prime256v1 -genkey -noout -out "$file"
@@ -35,9 +42,11 @@ ensure_private_key() {
   fi
 }
 
+
 ensure_private_key ca.key
 if [ ! -f ca.pem ]; then
-  openssl req -sha256 -new -key "ca.key" -out "ca.csr" -nodes -subj "/C=${CA_C}/ST=${CA_ST}/L=${CA_L}/O=${CA_O}/OU=${CA_OU}/CN=${CA_CN}" -addext "basicConstraints=critical,CA:true"
-  openssl x509 -req -in ca.csr -sha256 -signkey ca.key -out ca.pem -days 3650
-  rm -f ca.csr
+    openssl req -sha256 -new -key "ca.key" -out "ca.csr" -nodes \
+        -subj "/C=${CA_C}/ST=${CA_ST}/L=${CA_L}/O=${CA_O}/OU=${CA_OU}/CN=${CA_CN}" -addext "basicConstraints=critical,CA:true"
+    openssl x509 -req -in ca.csr -sha256 -signkey ca.key -out ca.pem -days 3650 $SIGNOPTS
+    rm -f ca.csr
 fi

@@ -31,10 +31,17 @@ if [ ! -f ca/index.txt ]; then touch ca/index.txt; fi
 if [ ! -f ca/index.txt.attr ]; then touch ca/index.txt.attr; fi
 if [ ! -f ca/serial ]; then date '+%s' > ca/serial; fi
 
+SIGNOPTS=''
 if ! [ -f "${FILE_NAME}.key" ]; then
     case $ALG in
         rsa)
             openssl genrsa -out "${FILE_NAME}.key" 2048
+            ;;
+        rsa-pss)
+            openssl genrsa -out "${FILE_NAME}.key" 2048
+            ## CA do not support this algorithm for now
+            # openssl genpkey -algorithm RSA-PSS -pkeyopt rsa_keygen_bits:2048 -out "${FILE_NAME}.key"
+            # SIGNOPTS='-sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1'
             ;;
         ec|ecc)
             openssl ecparam -name prime256v1 -genkey -noout -out "${FILE_NAME}.key"
@@ -92,5 +99,5 @@ subjectKeyIdentifier    = hash
 authorityKeyIdentifier  = keyid,issuer
 EOF
 
-openssl ca -batch -config config -in "${FILE_NAME}.csr" -out "${FILE_NAME}.pem" -notext -extensions ca_ext
+openssl ca -batch -config config $SIGNOPTS -in "${FILE_NAME}.csr" -out "${FILE_NAME}.pem" -notext -extensions ca_ext
 rm -f "${FILE_NAME}.csr"

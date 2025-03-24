@@ -25,10 +25,15 @@ CL_CN="${TLS_CLIENT_COMMON_NAME:-localhost}"
 
 FNAME="${TLS_CLIENT_FNAME:-client}"
 
+SIGNOPTS=''
 if [ ! -f "${FNAME}.key" ]; then
   case $ALG in
     rsa)
       openssl genrsa -out "${FNAME}.key" 2048
+      ;;
+    rsa-pss)
+      openssl genpkey -algorithm RSA-PSS -pkeyopt rsa_keygen_bits:2048 -out "${FNAME}.key"
+      SIGNOPTS='-sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1'
       ;;
     ec|ecc)
       openssl ecparam -name prime256v1 -genkey -noout -out "${FNAME}.key"
@@ -45,6 +50,6 @@ fi
 
 if [ ! -f "${FNAME}" ]; then
   openssl req -sha256 -new -key "${FNAME}.key" -out client.csr -nodes -subj "/C=${CL_C}/ST=${CL_ST}/L=${CL_L}/O=${CL_O}/OU=${CL_OU}/CN=${CL_CN}" -addext "basicConstraints=critical,CA:false"
-  openssl x509 -req -CA "${ISSUER_CA}.pem" -CAkey "${ISSUER_CA}.key" -in client.csr -out "${FNAME}.pem" -days 3650  -CAcreateserial
+  openssl x509 -req -CA "${ISSUER_CA}.pem" -CAkey "${ISSUER_CA}.key" $SIGNOPTS -in client.csr -out "${FNAME}.pem" -days 3650 -CAcreateserial
   rm -f client.csr
 fi

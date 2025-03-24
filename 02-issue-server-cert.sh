@@ -98,10 +98,16 @@ if [ ! -f ca/index.txt ]; then touch ca/index.txt; fi
 if [ ! -f ca/index.txt.attr ]; then touch ca/index.txt.attr; fi
 if [ ! -f ca/serial ]; then date '+%s' > ca/serial; fi
 
+SIGNOPTS=''
 case $ALG in
     rsa)
       openssl genrsa -out server.key 2048
       openssl req -newkey rsa:2048 -sha256 -key server.key -out server.csr -nodes -config ./config
+      ;;
+    rsa-pss)
+      openssl genpkey -algorithm RSA-PSS -pkeyopt rsa_keygen_bits:2048 -out server.key
+      openssl req -new -key server.key -out server.csr -nodes -config ./config
+      SIGNOPTS='-sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1'
       ;;
     ec|ecc)
       openssl ecparam -name prime256v1 -genkey -noout -out server.key
@@ -116,5 +122,5 @@ case $ALG in
       exit 1
       ;;
 esac
-openssl ca -notext -batch -out server.pem -config config -extensions req_ext -infiles server.csr
+openssl ca -notext -batch -out server.pem -config config $SIGNOPTS -extensions req_ext -infiles server.csr
 rm -f server.csr
