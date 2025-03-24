@@ -26,7 +26,7 @@ ensure_private_key() {
         openssl genrsa -out "$file" 2048
         ## CA do not support this algorithm for now
         # openssl genpkey -algorithm RSA-PSS -pkeyopt rsa_keygen_bits:2048 -out "$file"
-        # SIGNOPTS='-sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1'
+        # SIGNOPTS=$RSA_PSS_SIGNOPTS
         ;;
       ec|ecc)
         openssl ecparam -name prime256v1 -genkey -noout -out "$file"

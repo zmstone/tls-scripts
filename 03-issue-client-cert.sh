@@ -33,7 +33,7 @@ if [ ! -f "${FNAME}.key" ]; then
       ;;
     rsa-pss)
       openssl genpkey -algorithm RSA-PSS -pkeyopt rsa_keygen_bits:2048 -out "${FNAME}.key"
-      SIGNOPTS='-sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1'
+      SIGNOPTS=$RSA_PSS_SIGNOPTS
       ;;
     ec|ecc)
       openssl ecparam -name prime256v1 -genkey -noout -out "${FNAME}.key"

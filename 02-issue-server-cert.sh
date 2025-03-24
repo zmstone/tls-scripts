@@ -107,7 +107,7 @@ case $ALG in
     rsa-pss)
       openssl genpkey -algorithm RSA-PSS -pkeyopt rsa_keygen_bits:2048 -out server.key
       openssl req -new -key server.key -out server.csr -nodes -config ./config
-      SIGNOPTS='-sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1'
+      SIGNOPTS=$RSA_PSS_SIGNOPTS
       ;;
     ec|ecc)
       openssl ecparam -name prime256v1 -genkey -noout -out server.key
