@@ -11,7 +11,8 @@ clean() {
 
 clean
 
-export RSA_PSS_SIGNOPTS='-sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:20'
+DEFAULT_RSA_PSS_SIGNOPTS='-sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:20'
+export RSA_PSS_SIGNOPTS="${RSA_PSS_SIGNOPTS-${DEFAULT_RSA_PSS_SIGNOPTS}}"
 
 export ALG="${ALG:-rsa}"
 ./00-generate-root-ca.sh
