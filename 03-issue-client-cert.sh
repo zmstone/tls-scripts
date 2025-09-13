@@ -32,6 +32,7 @@ if [ ! -f "${FNAME}.key" ]; then
       openssl genrsa -out "${FNAME}.key" 2048
       ;;
     rsa-pss)
+      #openssl genrsa -out "${FNAME}.key" 2048
       openssl genpkey -algorithm RSA-PSS -pkeyopt rsa_keygen_bits:2048 -out "${FNAME}.key"
       SIGNOPTS=$RSA_PSS_SIGNOPTS
       ;;

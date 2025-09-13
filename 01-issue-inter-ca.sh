@@ -38,10 +38,12 @@ if ! [ -f "${FILE_NAME}.key" ]; then
             openssl genrsa -out "${FILE_NAME}.key" 2048
             ;;
         rsa-pss)
-            openssl genrsa -out "${FILE_NAME}.key" 2048
-            ## CA do not support this algorithm for now
-            # openssl genpkey -algorithm RSA-PSS -pkeyopt rsa_keygen_bits:2048 -out "${FILE_NAME}.key"
-            # SIGNOPTS=$RSA_PSS_SIGNOPTS
+            if [ "${SUFFIX}" = 'server' ]; then
+                openssl genrsa -out "${FILE_NAME}.key" 2048
+            else
+                openssl genpkey -algorithm RSA-PSS -pkeyopt rsa_keygen_bits:2048 -out "${FILE_NAME}.key"
+                #SIGNOPTS=$RSA_PSS_SIGNOPTS
+            fi
             ;;
         ec|ecc)
             openssl ecparam -name prime256v1 -genkey -noout -out "${FILE_NAME}.key"

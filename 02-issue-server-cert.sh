@@ -100,14 +100,9 @@ if [ ! -f ca/serial ]; then date '+%s' > ca/serial; fi
 
 SIGNOPTS=''
 case $ALG in
-    rsa)
+    rsa*)
       openssl genrsa -out server.key 2048
       openssl req -newkey rsa:2048 -sha256 -key server.key -out server.csr -nodes -config ./config
-      ;;
-    rsa-pss)
-      openssl genpkey -algorithm RSA-PSS -pkeyopt rsa_keygen_bits:2048 -out server.key
-      openssl req -new -key server.key -out server.csr -nodes -config ./config
-      SIGNOPTS=$RSA_PSS_SIGNOPTS
       ;;
     ec|ecc)
       openssl ecparam -name prime256v1 -genkey -noout -out server.key
