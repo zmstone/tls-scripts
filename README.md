@@ -91,5 +91,8 @@ CLIENT_CERT_ISSUER=inter-ca-2
 You can choose the type of cryptographic key via the `ALG` environment variable. Options:
 
 - `rsa`: Generates a **2048-bit RSA** key (key size is fixed in the current scripts)  
-- `ec` or `ecc`: Generates an **ECDSA** key using curve `prime256v1`  
+- `rsa-pss`: Generates an **RSA-PSS** key (uses Probabilistic Signature Scheme, also known as PSS padding).  
+  This option is more secure for signatures. Currently, it applies only to client certificates —  
+  server certificates will continue to use standard RSA.
+- `ec`: Generates an **ECDSA** key using curve `prime256v1`  
 - `dsa`: Generates a **DSA** key  
